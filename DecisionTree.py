@@ -49,7 +49,7 @@ from sklearn import tree
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
-kf = KFold(n_splits=10,shuffle=True)
+kf = KFold(n_splits=10,shuffle=True,random_state=5)
 result = 0
 for i, (train, test) in enumerate(kf.split(df)):
   
