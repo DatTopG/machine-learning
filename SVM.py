@@ -11,6 +11,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 from sklearn import svm
 from sklearn.metrics import accuracy_score, classification_report
+# from sklearn.externals import joblib
+import joblib
 
 
 # %%
@@ -44,12 +46,10 @@ wine["quality"].value_counts()
 quality = wine["quality"].values
 category = []
 for num in quality:
-    if num < 5:
+    if num <= 5:
         category.append("Bad")
-    elif num > 6:
-        category.append("Good")
     else:
-        category.append("Medium")
+        category.append("Good")
 
 
 # %%
@@ -90,7 +90,7 @@ y = labelencode_y.fit_transform(y)
 
 # %%
 # Separate cross-validation
-skf = StratifiedShuffleSplit(n_splits=4)
+skf = StratifiedShuffleSplit(n_splits=10,random_state=5)
 
 
 # %%
@@ -103,22 +103,11 @@ all_accuracies = cross_val_score(
     cv=skf,
     n_jobs=-1)
 print(all_accuracies)
+print("mean acc:",np.mean(all_accuracies))
 
 
 # %%
-# TRAINING WITH PARAMETER 2
-classifier = SVC(C=0.3, gamma=0.1, kernel='rbf')
-all_accuracies = cross_val_score(
-    estimator=classifier,
-    X=X,
-    y=y,
-    cv=skf,
-    n_jobs=-1)
-print(all_accuracies)
-
-
-# %%
-# TRANING WITH PARAMETER 3
+# TRANING WITH PARAMETER 2
 classifier = SVC(C=1, gamma=0.3, kernel='rbf')
 all_accuracies = cross_val_score(
     estimator=classifier,
@@ -127,14 +116,15 @@ all_accuracies = cross_val_score(
     cv=skf,
     n_jobs=-1)
 print(all_accuracies)
+print("mean acc:",np.mean(all_accuracies))
 
 
-# Kernel SVM 'linear', 'poly', 'sigmoid', 'rbf'
+# Kernel SVM 'rbf'
 # TUNING PARAMETER using GridSearchCV
 # %%
 pipe_svm = Pipeline([('clf', svm.SVC())])
-params_C=np.logspace(-1,1, num=20)
-params_g=np.logspace(-1,1, num=20)
+params_C=np.geomspace(pow(2,-5),pow(2,15),num=21)
+params_g=np.geomspace(pow(2,-15),pow(2,3),num=19)
 grid_params = dict(clf__C=params_C,
                    clf__gamma=params_g,
                    clf__kernel=['rbf'])
@@ -144,10 +134,3 @@ gs_svm = GridSearchCV(estimator=pipe_svm,
                       cv=skf,
                       n_jobs=-1)
 gs_svm.fit(X, y)
-
-
-# %%
-print(gs_svm.best_score_)
-print(gs_svm.best_params_)
-#print(skf)
-
