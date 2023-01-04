@@ -134,3 +134,6 @@ gs_svm = GridSearchCV(estimator=pipe_svm,
                       cv=skf,
                       n_jobs=-1)
 gs_svm.fit(X, y)
+# %%
+print(gs_svm.best_score_)
+print(gs_svm.best_params_)
