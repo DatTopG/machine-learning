@@ -60,7 +60,7 @@ for i, (train, test) in enumerate(kf.split(df)):
   y_test = df.iloc[test]['quality']
   x_test = x_test.drop(columns=['quality'])
   
-  clf = tree.DecisionTreeClassifier(random_state=0, max_depth=5)
+  clf = tree.DecisionTreeClassifier(random_state=0, max_depth=6)
   clf = clf.fit(x_train, y_train)
   predict = clf.predict(x_test)
   y_test = y_test.tolist()
